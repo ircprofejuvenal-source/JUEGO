@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BibliaLearn — Aprende Estructura Bíblica</title>
+
+    <!-- Fuente -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
+    <!-- Configuración de Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        surface: {
+                            0: '#030304',
+                            1: '#050507',
+                            2: '#0A0A0C',
+                            3: '#0E0E12',
+                            4: '#18181b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Nuestro CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ========== TOAST NOTIFICATION ========== -->
+    <div id="toast" class="toast">
+        <div class="glass rounded-xl px-5 py-3 flex items-center gap-3 text-sm font-medium">
+            <span id="toast-icon"></span>
+            <span id="toast-text"></span>
+        </div>
+    </div>
+
+    <!-- ========== XP FLOTANTE ========== -->
+    <div id="xp-float" class="fixed top-20 left-1/2 -translate-x-1/2 z-[10000] pointer-events-none hidden">
+        <div class="text-emerald-400 font-bold text-2xl animate-xp-float">+10 XP</div>
+    </div>
+
+
+    <!-- ================================================================== -->
+    <!--                        PANTALLA: INICIO                            -->
+    <!-- ================================================================== -->
+    <div id="screen-home" class="screen active">
+
+        <!-- Barra de navegación superior -->
+        <nav class="nav-top">
+            <div class="flex items-center gap-3">
+                <div class="logo-icon">
+                    <span class="iconify text-white text-sm" data-icon="lucide:book-open"></span>
+                </div>
+                <span class="font-semibold text-sm tracking-tight">BibliaLearn</span>
+            </div>
+            <div class="flex items-center gap-5">
+                <div class="tooltip flex items-center gap-1.5" data-tip="Racha">
+                    <span class="iconify text-orange-400 text-lg animate-streak" data-icon="lucide:flame"></span>
+                    <span id="nav-streak" class="text-sm font-semibold text-orange-400">0</span>
+                </div>
+                <div class="tooltip flex items-center gap-1.5" data-tip="Experiencia">
+                    <span class="iconify text-yellow-400 text-lg" data-icon="lucide:star"></span>
+                    <span id="nav-xp" class="text-sm font-semibold text-yellow-400">0</span>
+                </div>
+                <div class="tooltip flex items-center gap-1" data-tip="Vidas">
+                    <span id="nav-hearts" class="iconify text-red-400 text-lg" data-icon="lucide:heart"></span>
+                    <span id="nav-hearts-count" class="text-sm font-semibold text-red-400">5</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <div class="hero-section">
+            <div class="glow-indigo"></div>
+            <div class="glow-purple"></div>
+            <div class="animate-fade-in-up">
+                <h1 class="hero-title">Estructura Bíblica</h1>
+                <p class="hero-subtitle">
+                    Aprende la organización de los 66 libros de la Biblia, sus divisiones, autores y contextos.
+                </p>
+            </div>
+        </div>
+
+        <!-- Ruta de lecciones -->
+        <div class="lesson-path">
+            <div class="max-w-lg mx-auto">
+
+                <!-- Sección: Fundamentos -->
+                <div class="lesson-section animate-fade-in-up delay-100" style="opacity:0;">
+                    <div class="section-label">
+                        <span class="iconify text-indigo-400" data-icon="lucide:layers"></span>
+                        <span>Fundamentos</span>
+                    </div>
+                    <div class="lessons-list">
+
+                        <div class="lesson-node" data-lesson="0" onclick="startLesson(0)">
+                            <div class="lesson-icon" style="background: linear-gradient(to top right, #6366f1, #a855f7);">
+                                <span class="iconify text-white text-2xl" data-icon="lucide:book-open"></span>
+                            </div>
+                            <div class="lesson-info">
+                                <h3 class="lesson-name">La Biblia en General</h3>
+                                <p class="lesson-desc">Testamentos, cantidad de libros y estructura básica</p>
+                            </div>
+                            <div id="lesson-0-status" class="lesson-status">
+                                <span class="iconify text-slate-600 text-xl" data-icon="lucide:circle"></span>
+                            </div>
+                        </div>
+
+                        <div class="lesson-node" data-lesson="1" onclick="startLesson(1)">
+                            <div class="lesson-icon" style="background: linear-gradient(to top right, #6366f1, #818cf8);">
+                                <span class="iconify text-white text-2xl" data-icon="lucide:scroll-text"></span>
+                            </div>
+                            <div class="lesson-info">
+                                <h3 class="lesson-name">El Pentateuco</h3>
+                                <p class="lesson-desc">Los 5 libros de Moisés y su temática</p>
+                            </div>
+                            <div id="lesson-1-status" class="lesson-status">
+                                <span class="iconify text-slate-600 text-xl" data-icon="lucide:lock"></span>
+                            </div>
+                        </div>
+
+                        <div class="lesson-node" data-lesson="2" onclick="startLesson(2)">
+                            <div class="lesson-icon" style="background: linear-gradient(to top right, #6366f1, #818cf8);">
+                                <span class="iconify text-white text-2xl" data-icon="lucide:landmark"></span>
+                            </div>
+                            <div class="lesson-info">
+                                <h3 class="lesson-name">Libros Históricos</h3>
+                                <p class="lesson-desc">Josué hasta Ester: la historia de Israel</p>
+                            </div>
+                            <div id="lesson-2-status" class="lesson-status">
+                                <span class="iconify text-slate-600 text-xl" data-icon="lucide:lock"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Sección: Poesía y Profecía -->
+                <div class="lesson-section animate-fade-in-up delay-200" style="opacity:0;">
+                    <div class="section-label">
+                        <span class="iconify text-purple-400" data-icon="lucide:music"></span>
+                        <span>Poesía y Profecía</span>
+                    </div>
+                    <div class="lessons-list">
+
+                        <div class="lesson-node" data-lesson="3" onclick="startLesson(3)">
+                            <div class="lesson-icon" style="background: linear-gradient(to top right, #a855f7, #c084fc);">
+                                <span class="iconify text-white text-2xl" data-icon="lucide:feather"></span>
+                            </div>
+                            <div class="lesson-info">
+                                <h3 class="lesson-name">Libros Poéticos</h3>
+                                <p class="lesson-desc">Salmos, Proverbios, Job y más</p>
+                            </div>
+                            <div id="lesson-3-status" class="lesson-status">
+                                <span class="iconify text-slate-600 text-xl" data-icon="lucide:lock"></span>
+                            </div>
+                        </div>
+
+                        <div class="lesson-node" data-lesson="4" onclick="startLesson(4)">
+                            <div class="lesson-icon" style="background: linear-gradient(to top right, #f97316, #fb923c);">
+                                <span class="iconify text-white text-2xl" data-icon="lucide:megaphone"></span>
+                            </div>
+                            <div class="lesson-info">
+                                <h3 class="lesson-name">Profetas Mayores</h3>
+                                <p class="lesson-desc">Isaías, Jeremías, Ezequiel y Daniel</p>
+                            </div>
+                            <div id="lesson-4-status" class="lesson-status">
+                                <span class="iconify text-slate-600 text-xl" data-icon="lucide:lock"></span>
+                            </div>
+                        </div>
+
+                        <div class="lesson-node" data-lesson="5" onclick="startLesson(5)">
+                            <div class="lesson-icon" style="background: linear-gradient(to top right, #f97316, #fdba74);">
+                                <span class="iconify text-white text-2xl" data-icon="lucide:message-circle"></span>
+                            </div>
+                            <div class="lesson-info">
+                                <h3 class="lesson-name">Profetas Menores</h3>
+                                <p class="lesson-desc">Los 12 profetas menores del AT</p>
+                            </div>
+                            <div id="lesson-5-status" class="lesson-status">
+                                <span class="iconify text-slate-600 text-xl" data-icon="lucide:lock"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Sección: Nuevo Testamento -->
+                <div class="lesson-section animate-fade-in-up delay-300" style="opacity:0;">
+                    <div class="section-label">
+                        <span class="iconify text-emerald-400" data-icon="lucide:cross"></span>
+                        <span>Nuevo Testamento</span>
+                    </div>
+                    <div class="lessons-list">
+
+                        <div class="lesson-node" data-lesson="6" onclick="startLesson(6)">
+                            <div class="lesson-icon" style="background: linear-gradient(to top right, #ec4899, #f472b6);">
+                                <span class="iconify text-white text-2xl" data-icon="lucide:users"></span>
+                            </div>
+                            <div class="lesson-info">
+                                <h3 class="lesson-name">Los Evangelios</h3>
+                                <p class="lesson-desc">Mateo, Marcos, Lucas y Juan</p>
+                            </div>
+                            <div id="lesson-6-status" class="lesson-status">
+                                <span class="iconify text-slate-600 text-xl" data-icon="lucide:lock"></span>
+                            </div>
+                        </div>
+
+                        <div class="lesson-node" data-lesson="7" onclick="startLesson(7)">
+                            <div class="lesson-icon" style="background: linear-gradient(to top right, #0ea5e9, #38bdf8);">
+                                <span class="iconify text-white text-2xl" data-icon="lucide:mail"></span>
+                            </div>
+                            <div class="lesson-info">
+                                <h3 class="lesson-name">Las Epístolas</h3>
+                                <p class="lesson-desc">Cartas paulinas y generales</p>
+                            </div>
+                            <div id="lesson-7-status" class="lesson-status">
+                                <span class="iconify text-slate-600 text-xl" data-icon="lucide:lock"></span>
+                            </div>
+                        </div>
+
+                        <div class="lesson-node" data-lesson="8" onclick="startLesson(8)">
+                            <div class="lesson-icon" style="background: linear-gradient(to top right, #10b981, #34d399);">
+                                <span class="iconify text-white text-2xl" data-icon="lucide:eye"></span>
+                            </div>
+                            <div class="lesson-info">
+                                <h3 class="lesson-name">Profecía y Cierre</h3>
+                                <p class="lesson-desc">Apocalipsis y repaso final</p>
+                            </div>
+                            <div id="lesson-8-status" class="lesson-status">
+                                <span class="iconify text-slate-600 text-xl" data-icon="lucide:lock"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================================================================== -->
+    <!--                       PANTALLA: LECCIÓN                            -->
+    <!-- ================================================================== -->
+    <div id="screen-lesson" class="screen">
+
+        <!-- Barra superior de lección -->
+        <div class="lesson-topbar">
+            <div class="progress-track">
+                <div id="lesson-progress" class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+            <div class="lesson-topbar-inner">
+                <button onclick="exitLesson()" class="btn-close-lesson">
+                    <span class="iconify text-slate-400 text-xl" data-icon="lucide:x"></span>
+                </button>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1">
+                        <span class="iconify text-red-400 text-sm" data-icon="lucide:heart"></span>
+                        <span id="lesson-hearts" class="text-sm font-semibold text-red-400">5</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="iconify text-yellow-400 text-sm" data-icon="lucide:star"></span>
+                        <span id="lesson-xp" class="text-sm font-semibold text-yellow-400">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor de preguntas -->
+        <div class="question-area">
+            <div class="max-w-lg mx-auto" id="question-container">
+                <!-- Se inyecta dinámicamente desde JS -->
+            </div>
+        </div>
+
+        <!-- Barra inferior -->
+        <div class="lesson-bottombar">
+            <div class="max-w-lg mx-auto">
+                <div id="feedback-bar" class="hidden feedback-bar"></div>
+                <button id="check-btn" class="check-btn" disabled onclick="handleCheck()">
+                    COMPROBAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================================================================== -->
+    <!--                      PANTALLA: RESULTADOS                          -->
+    <!-- ================================================================== -->
+    <div id="screen-results" class="screen screen-centered">
+        <div class="max-w-md w-full text-center">
+            <div id="results-content" class="animate-scale-in">
+                <!-- Se inyecta dinámicamente desde JS -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================================================================== -->
+    <!--                     PANTALLA: SIN VIDAS                            -->
+    <!-- ================================================================== -->
+    <div id="screen-gameover" class="screen screen-centered">
+        <div class="max-w-md w-full text-center">
+            <div class="animate-scale-in">
+                <div class="gameover-icon">
+                    <span class="iconify text-red-400 text-4xl" data-icon="lucide:heart-off"></span>
+                </div>
+                <h2 class="text-2xl font-medium mb-2 tracking-tight">¡Sin vidas!</h2>
+                <p class="text-slate-400 text-sm mb-8 font-light">
+                    No te preocupes, practicar es parte del aprendizaje. ¡Inténtalo de nuevo!
+                </p>
+                <div class="glass rounded-2xl p-5 mb-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-2xl font-semibold text-yellow-400" id="go-xp">0</div>
+                            <div class="text-xs text-slate-500 mt-1">XP ganados</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-semibold text-indigo-400" id="go-correct">0</div>
+                            <div class="text-xs text-slate-500 mt-1">Correctas</div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="goHome()" class="btn-primary w-full h-14 rounded-2xl font-semibold text-sm text-white mb-3">
+                    VOLVER AL INICIO
+                </button>
+                <button onclick="retryLesson()" class="btn-glass w-full h-12 rounded-2xl font-medium text-sm text-slate-300">
+                    REINTENTAR LECCIÓN
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Nuestro JS -->
+    <script src="script.js"></script>
+
+</body>
+</html>
