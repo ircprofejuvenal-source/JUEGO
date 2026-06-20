@@ -1,0 +1,157 @@
+/* ================================================================
+   BibliaLearn — script.js
+   Lógica completa del juego estilo Duolingo
+   ================================================================ */
+
+
+// ===================== ESTADO GLOBAL =====================
+
+const state = {
+    xp: 0,
+    streak: 0,
+    hearts: 5,
+    maxHearts: 5,
+    completedLessons: [],
+    currentLesson: null,
+    currentQuestionIndex: 0,
+    questions: [],
+    lessonXp: 0,
+    lessonCorrect: 0,
+    selectedAnswer: null,
+    isChecked: false,
+    matchState: { selectedLeft: null, selectedRight: null, matched: [] },
+    dragState: { placed: {} }
+};
+
+
+// ===================== PERSISTENCIA (LOCALSTORAGE) =====================
+
+function loadState() {
+    try {
+        const saved = localStorage.getItem('biblialearn-state');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            state.xp = parsed.xp || 0;
+            state.streak = parsed.streak || 0;
+            state.hearts = parsed.hearts || 5;
+            state.completedLessons = parsed.completedLessons || [];
+        }
+    } catch (e) {
+        console.warn('Error cargando estado guardado:', e);
+    }
+}
+
+function saveState() {
+    try {
+        localStorage.setItem('biblialearn-state', JSON.stringify({
+            xp: state.xp,
+            streak: state.streak,
+            hearts: state.hearts,
+            completedLessons: state.completedLessons
+        }));
+    } catch (e) {
+        console.warn('Error guardando estado:', e);
+    }
+}
+
+
+// ===================== DATOS DE LAS LECCIONES =====================
+
+const lessons = [
+    {
+        title: "La Biblia en General",
+        questions: [
+            {
+                type: "multiple",
+                question: "¿Cuántos libros tiene la Biblia en total?",
+                options: ["66", "73", "39", "27"],
+                correct: 0,
+                explanation: "La Biblia protestante tiene 66 libros: 39 en el Antiguo Testamento y 27 en el Nuevo Testamento."
+            },
+            {
+                type: "multiple",
+                question: "¿Cómo se divide la Biblia?",
+                options: [
+                    "Antiguo y Nuevo Testamento",
+                    "Antiguo Pacto y Nueva Alianza",
+                    "Libros sagrados y apócrifos",
+                    "Antigua Ley y Nueva Ley"
+                ],
+                correct: 0,
+                explanation: "La Biblia se divide en dos grandes secciones: el Antiguo Testamento (39 libros) y el Nuevo Testamento (27 libros)."
+            },
+            {
+                type: "true-false",
+                question: "El Antiguo Testamento tiene 27 libros.",
+                correct: false,
+                explanation: "Falso. El Antiguo Testamento tiene 39 libros. El Nuevo Testamento es el que tiene 27 libros."
+            },
+            {
+                type: "multiple",
+                question: "¿En qué idioma fue escrito originalmente el Antiguo Testamento?",
+                options: ["Griego", "Arameo", "Hebreo (con partes en arameo)", "Latín"],
+                correct: 2,
+                explanation: "El AT fue escrito principalmente en hebreo, con algunas secciones en arameo (partes de Daniel y Esdras)."
+            },
+            {
+                type: "multiple",
+                question: "¿En qué idioma fue escrito el Nuevo Testamento?",
+                options: ["Hebreo", "Latín", "Griego koiné", "Arameo"],
+                correct: 2,
+                explanation: "El Nuevo Testamento fue escrito en griego koiné (griego común), el idioma franco del Mediterráneo oriental."
+            },
+            {
+                type: "fill-blank",
+                question: "El Antiguo Testamento tiene __ libros y el Nuevo Testamento tiene __ libros.",
+                blanks: ["39", "27"],
+                options: [["39", "27", "46", "33"], ["27", "39", "21", "33"]],
+                explanation: "AT: 39 libros. NT: 27 libros. Total: 66 libros."
+            }
+        ]
+    },
+    {
+        title: "El Pentateuco",
+        questions: [
+            {
+                type: "multiple",
+                question: "¿Qué significa la palabra 'Pentateuco'?",
+                options: ["Cinco rollos", "Los cinco libros", "Primera ley", "Libro de Moisés"],
+                correct: 0,
+                explanation: "Pentateuco viene del griego 'pente' (cinco) y 'teuchos' (rollo). Se refiere a los 5 primeros libros."
+            },
+            {
+                type: "order",
+                question: "Ordena los 5 libros del Pentateuco:",
+                items: ["Deuteronomio", "Génesis", "Levítico", "Números", "Éxodo"],
+                correctOrder: ["Génesis", "Éxodo", "Levítico", "Números", "Deuteronomio"],
+                explanation: "El orden correcto es: Génesis, Éxodo, Levítico, Números y Deuteronomio."
+            },
+            {
+                type: "multiple",
+                question: "¿Qué libro del Pentateuco contiene la ley ceremonial y los sacrificios?",
+                options: ["Éxodo", "Deuteronomio", "Levítico", "Números"],
+                correct: 2,
+                explanation: "Levítico es el libro de las leyes ceremoniales, los sacrificios y las instrucciones para los sacerdotes (levitas)."
+            },
+            {
+                type: "multiple",
+                question: "¿Quién es considerado autor tradicional del Pentateuco?",
+                options: ["David", "Moisés", "Abraham", "Salomón"],
+                correct: 1,
+                explanation: "Tradicionalmente se atribuye a Moisés la autoría del Pentateuco, por eso se le llama 'Los libros de Moisés'."
+            },
+            {
+                type: "match",
+                question: "Relaciona cada libro con su contenido principal:",
+                pairs: [
+                    { left: "Génesis", right: "Orígenes y patriarcas" },
+                    { left: "Éxodo", right: "Liberación de Egipto" },
+                    { left: "Números", right: "Censo y peregrinaje" },
+                    { left: "Deuteronomio", right: "Segunda ley / discurso" }
+                ],
+                explanation: "Cada libro tiene un enfoque único: orígenes, liberación, ley ceremonial, viaje por el desierto y recapitulación de la ley."
+            },
+            {
+                type: "true-false",
+                question: "El libro de Génesis termina con la muerte de Moisés.",
+                correct:
